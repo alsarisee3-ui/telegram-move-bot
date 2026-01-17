@@ -37,7 +37,7 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_id=original.message_id
         )
 
-        # إرسال سطر الإيموجي بعد النقل
+        # ✅ إرسال سطر الإيموجي بعد النقل
         await context.bot.send_message(TARGET_GROUP, EMOJI_LINE)
 
         # حذف الرسالة الأصلية
@@ -64,7 +64,7 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_id=m.message_id
         )
 
-    # إرسال سطر الإيموجي بعد نقل الألبوم
+    # ✅ إرسال سطر الإيموجي بعد نقل الألبوم
     await context.bot.send_message(TARGET_GROUP, EMOJI_LINE)
 
     # حذف الألبوم من الجروب الأول
