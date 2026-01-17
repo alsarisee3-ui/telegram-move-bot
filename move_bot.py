@@ -10,10 +10,10 @@ from telegram.ext import (
     filters,
 )
 
-# 🧭 ID الجروب الثاني (الهدف)
+# 🧭 ID الجروب الثاني (الذي سيتم النقل إليه)
 TARGET_GROUP = -1003354274844
 
-# 🟢 سطر الإيموجي الذي سيُرسل بعد كل نقل
+# 👍 سطر الإيموجي الذي يُرسل بعد كل نقل
 EMOJI_LINE = "👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍"
 
 albums = defaultdict(list)
@@ -37,7 +37,7 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_id=original.message_id
         )
 
-        # ✅ إرسال سطر الإيموجي بعد النقل
+        # إرسال سطر الإيموجي بعد النقل
         await context.bot.send_message(TARGET_GROUP, EMOJI_LINE)
 
         # حذف الرسالة الأصلية
@@ -64,7 +64,7 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_id=m.message_id
         )
 
-    # ✅ إرسال سطر الإيموجي بعد نقل الألبوم
+    # إرسال سطر الإيموجي بعد نقل الألبوم
     await context.bot.send_message(TARGET_GROUP, EMOJI_LINE)
 
     # حذف الألبوم من الجروب الأول
@@ -81,8 +81,6 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # 🔐 التوكن من متغيرات البيئة (Railway)
 app = ApplicationBuilder().token(os.environ["BOT_TOKEN"]).build()
-
 app.add_handler(CommandHandler("tm", move))
 app.add_handler(MessageHandler(filters.ALL, collect))
-
 app.run_polling()
