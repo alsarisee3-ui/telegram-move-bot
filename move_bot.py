@@ -53,7 +53,9 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
     albums.pop(gid, None)
 
 # ✅ Railway-friendly token
-app = ApplicationBuilder().token(os.getenv("8455462789:AAFgSL_M5iSEL7s0yZ5WY1SP7xnasCHArdY")).build()
+import os
+
+app = ApplicationBuilder().token(os.environ["BOT_TOKEN"]).build()
 app.add_handler(CommandHandler("tm", move))
 app.add_handler(MessageHandler(filters.ALL, collect))
 app.run_polling()
