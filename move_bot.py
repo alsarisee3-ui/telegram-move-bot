@@ -10,10 +10,12 @@ from telegram.ext import (
     filters,
 )
 
-# 🧭 ضع هنا ID الجروب الثاني (الذي سيتم النقل إليه)
+# 🧭 ID الجروب الثاني (الهدف)
 TARGET_GROUP = -1003354274844
 
-# لتجميع رسائل الألبومات
+# 🟢 سطر الإيموجي الذي سيُرسل بعد كل نقل
+EMOJI_LINE = "👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍👍"
+
 albums = defaultdict(list)
 
 async def collect(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -27,7 +29,7 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cmd = update.message
     original = update.message.reply_to_message
 
-    # 🔹 حالة رسالة واحدة (حتى لو كانت Forward)
+    # 🔹 حالة رسالة واحدة
     if not original.media_group_id:
         await context.bot.copy_message(
             chat_id=TARGET_GROUP,
@@ -35,25 +37,22 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_id=original.message_id
         )
 
-        # ✨ إضافة 3 أسطر فارغة بعد النقل
-        await context.bot.send_message(TARGET_GROUP, "\n\n\n")
+        # ✅ إرسال سطر الإيموجي بعد النقل
+        await context.bot.send_message(TARGET_GROUP, EMOJI_LINE)
 
         # حذف الرسالة الأصلية
-        await context.bot.delete_message(
-            chat_id=original.chat_id,
-            message_id=original.message_id
-        )
+        try:
+            await context.bot.delete_message(original.chat_id, original.message_id)
+        except:
+            pass
 
         # حذف أمر /tm
-        await context.bot.delete_message(
-            chat_id=cmd.chat_id,
-            message_id=cmd.message_id
-        )
+        await context.bot.delete_message(cmd.chat_id, cmd.message_id)
         return
 
     # 🔹 حالة ألبوم صور
     gid = original.media_group_id
-    await asyncio.sleep(2)  # ننتظر وصول كل صور الألبوم
+    await asyncio.sleep(2)
 
     messages = albums.get(gid, [original])
 
@@ -65,28 +64,22 @@ async def move(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_id=m.message_id
         )
 
-    # ✨ إضافة 3 أسطر فارغة بعد نقل الألبوم
-    await context.bot.send_message(TARGET_GROUP, "\n\n\n")
+    # ✅ إرسال سطر الإيموجي بعد نقل الألبوم
+    await context.bot.send_message(TARGET_GROUP, EMOJI_LINE)
 
     # حذف الألبوم من الجروب الأول
     for m in messages:
         try:
-            await context.bot.delete_message(
-                chat_id=m.chat_id,
-                message_id=m.message_id
-            )
+            await context.bot.delete_message(m.chat_id, m.message_id)
         except:
             pass
 
     # حذف أمر /tm
-    await context.bot.delete_message(
-        chat_id=cmd.chat_id,
-        message_id=cmd.message_id
-    )
+    await context.bot.delete_message(cmd.chat_id, cmd.message_id)
 
     albums.pop(gid, None)
 
-# 🔐 قراءة التوكن من متغيرات البيئة (Railway)
+# 🔐 التوكن من متغيرات البيئة (Railway)
 app = ApplicationBuilder().token(os.environ["BOT_TOKEN"]).build()
 
 app.add_handler(CommandHandler("tm", move))
